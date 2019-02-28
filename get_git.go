@@ -90,25 +90,28 @@ func (g *GitGetter) Get(dst string, u *url.URL) error {
 		}
 	}
 
-	// For SSH-style URLs, if they use the SCP syntax of host:path, then
-	// the URL will be mangled. We detect that here and correct the path.
-	// Example: host:path/bar will turn into host/path/bar
-	if u.Scheme == "ssh" {
-		if idx := strings.Index(u.Host, ":"); idx > -1 {
-			// Copy the URL so we don't modify the input
-			var newU url.URL = *u
-			u = &newU
+    // The following code breaks the ssh port number config in the URL like 'git::ssh://git@company.git.host:2222/path/to/repo.git'.
+    // Therefore I need to comment out the code and SCP syntax is disabled.
 
-			// Path includes the part after the ':'.
-			u.Path = u.Host[idx+1:] + u.Path
-			if u.Path[0] != '/' {
-				u.Path = "/" + u.Path
-			}
+	// // For SSH-style URLs, if they use the SCP syntax of host:path, then
+	// // the URL will be mangled. We detect that here and correct the path.
+	// // Example: host:path/bar will turn into host/path/bar
+	// if u.Scheme == "ssh" {
+	// 	if idx := strings.Index(u.Host, ":"); idx > -1 {
+	// 		// Copy the URL so we don't modify the input
+	// 		var newU url.URL = *u
+	// 		u = &newU
 
-			// Host trims up to the :
-			u.Host = u.Host[:idx]
-		}
-	}
+	// 		// Path includes the part after the ':'.
+	// 		u.Path = u.Host[idx+1:] + u.Path
+	// 		if u.Path[0] != '/' {
+	// 			u.Path = "/" + u.Path
+	// 		}
+
+	// 		// Host trims up to the :
+	// 		u.Host = u.Host[:idx]
+	// 	}
+	// }
 
 	// Clone or update the repository
 	_, err := os.Stat(dst)
